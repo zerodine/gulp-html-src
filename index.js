@@ -126,7 +126,7 @@ module.exports = function(options) {
 					if (isRelative(fileName)) {
 						try	{
 							var absoluteFileName = makeAbsoluteFileName(file, fileName);
-							var readPromise = streamToBuffer(options.createReadStream(absoluteFileName))
+							/*var readPromise = streamToBuffer(options.createReadStream(absoluteFileName))
 							.then(function(contents) {
 								stream.push(new File({
 									cwd: file.cwd,
@@ -137,7 +137,16 @@ module.exports = function(options) {
 							}, function(err) {
 								stream.emit('error', err);
 							});
-							bufferReadPromises.push(readPromise);
+							bufferReadPromises.push(readPromise);*/
+							// quick and dirty fix to read file sync
+							// TOTO: make it configurable
+							var contents = fs.readFileSync(absoluteFileName);
+			                                stream.push(new File({
+			                                	cwd: file.cwd,
+			                                	base: file.base,
+			                                	path: absoluteFileName,
+			                                	contents: contents
+			                            	}));
 						} 
 						catch(err) {
 							stream.emit('error', err);
